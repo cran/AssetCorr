@@ -1,0 +1,7 @@
+exportPattern("^[[:alpha:]]+")
+import("VineCopula","bootstrap","stats4","mvtnorm","boot","numDeriv","mvQuad", "ggplot2","methods","Rdpack","grid")
+importFrom("stats", "acf", "cov", "dbinom", "dnorm", "integrate",
+             "optimise", "pnorm", "qchisq", "qnorm", "qt", "rbinom",
+             "rnorm", "sd", "uniroot", "var","density")
+
+importFrom("utils", "setTxtProgressBar", "txtProgressBar")
