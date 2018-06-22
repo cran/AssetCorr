@@ -84,8 +84,9 @@ The returned value is a list, containing the following components (depending on 
 
 
 \seealso{
-\code{\link{intraAMM}}, \code{\link{intraFMM}}, \code{\link{intraJDP2}}
-\code{\link{intraMLE}}, \code{\link{intraJDP1}}, \code{\link{intraCMM}}}
+\code{\link{intraAMM}}, \code{\link{intraFMM}}, \code{\link{intraJDP2}},
+\code{\link{intraMLE}}, \code{\link{intraJDP1}}, \code{\link{intraCMM}},
+\code{\link{intraMode}},\code{\link{intraBeta}}}
 \examples{
 set.seed(10)
 d=defaultTimeseries(100,0.01,10,0.01)

@@ -1,5 +1,5 @@
-intraJDP2 <-
-function(d, n, B=0, DB=c(0,0), JC=FALSE, CI_Boot, type="bca", plot=FALSE){
+intraBeta=function(d,n,Quantile=0.999,B=0,DB=c(0,0),JC=FALSE,CI_Boot,type="bca", plot=FALSE){
+  
   if(is.numeric(d)){d=d}else{stop("d is not numeric")}
   if(is.numeric(n)){n=n}else{stop("n is not numeric")}
   if(B==0&& plot==TRUE){stop("please select a number of bootstrap repititions for the plot")}
@@ -7,64 +7,45 @@ function(d, n, B=0, DB=c(0,0), JC=FALSE, CI_Boot, type="bca", plot=FALSE){
   if(DB[1]%%1==0 && DB[2]%%1==0 ){DB=DB}else{stop("At least one entry in DB is not an integer")}
   if(length(d)==length(n)){}else{stop("Input vectors do not have the same length")}
   
-  estimate=function(d,n){
-    estimateDefaultIntracorr <- function(pOneDefault, pTwoDefaults)# Equation 7 in Kalkbrenner
-    {
-      intracorr <- (pTwoDefaults - pOneDefault^2) / (pOneDefault - pOneDefault^2);
-      return (intracorr);
-    }
-    estimateAssetCorr <- function(pBothDefaults, PD_1, PD_2)
-    {
-      #   if (PD_1 == 0)
-      #   {
-      #     PD_1 = 10^-9;
-      #   }
-      #   if (PD_2 == 0)
-      #   {
-      #     PD_1 = 10^-9;
-      #   }
-      #   if (is.nan(pBothDefaults))
-      #   {
-      #     pBothDefaults = 10^-9;
-      #   }
-      c1 <- qnorm(PD_1);
-      c2 <- qnorm(PD_2);
-      fEquation <- function(rho)
-      {
-        return (pmvnorm(lower = c(-Inf, -Inf), upper = c(c1, c2), sigma = matrix(c(1, rho, rho, 1), nrow = 2)) - pBothDefaults);
-      }
-      return (uniroot(fEquation,c(0,1))$root);
-    }
-    
-    numPeriods <- length(n)
-    probOneDefault<- mean(d/n)
-    tempVec <-0
-    for (t in 1:numPeriods)
-    {
-      tempVec<- (tempVec + (d[t]^2 ) / (n[t]^2 ));
-    }
-    probTwoDefaults <- tempVec / numPeriods
-    defaultCorr <- estimateDefaultIntracorr(probOneDefault, probTwoDefaults);
-    Est<-list(Original =estimateAssetCorr(probTwoDefaults, probOneDefault, probOneDefault))
+  
+  
+  d1=d/n
+  estimate=function(d1){
+  
+  PD=mean(d1)
+  alpha=PD*((PD*(1-PD))/var(d1)-1)
+  beta=alpha/PD*(1-PD)
+  
+  
+  
+  foo=function(rho){
+    Var_Beta=qbeta(Quantile, alpha, beta)
+    Var_Vasicek=pnorm((qnorm(PD)+sqrt(rho)*qnorm(Quantile))/sqrt(1-rho))
+    return(abs(Var_Beta-Var_Vasicek))
+   
   }
-  Estimate_Standard<- estimate(d,n)
-  if(B>0){
-    
-    
+  Est<-list(Original =optimise(foo, interval = c(0, 1), maximum = FALSE)$minimum)
+  }
+  Estimate_Standard<-estimate(d1)
+  
+  
+  if(B>0){ 
     N<-length(n)
-    D<- matrix(ncol=1, nrow=N,d)
+    D<- matrix(ncol=1, nrow=N,d1)
     
-    BCA=function(data,n, indices){
+    BCA=function(data, indices){
       
       d <- data[indices,]
-      n<-n[indices]
-      tryCatch(estimate(d,n)$Original,error=function(e)NA)
+      
+      tryCatch(estimate(d)$Original,error=function(e)NA)
       
     }
     
-    boot1<- boot(data = D, statistic = BCA, n=n, R=B)
+    boot1<- boot(data = D, statistic = BCA, R=B)
+    
     
     Estimate_Bootstrap<-list(Original = boot1$t0, Bootstrap=2*boot1$t0 - mean(boot1$t,na.rm = TRUE),bValues=boot1$t )
+    
     
     if(missing(CI_Boot)){Estimate_Bootstrap=Estimate_Bootstrap}else{
       if(type=="norm"){Conf=(boot.ci(boot1,conf=CI_Boot,type = type)$normal[2:3])}
@@ -107,49 +88,53 @@ function(d, n, B=0, DB=c(0,0), JC=FALSE, CI_Boot, type="bca", plot=FALSE){
       print(P)
       
     }
+    
+    
+    
+    
   }
   
-  if(DB[1]!=0){
-    IN=DB[1]
-    OUT=DB[2]
-    theta1=NULL
-    theta2=matrix(ncol = OUT, nrow=IN)
-    for(i in 1:OUT){
-      N<-length(d)
-      Ib<-sample(N,N,replace=TRUE)  ## sampling with replacement
-      d_o<-d[Ib] 
-      n_o<-n[Ib]
-      try(theta1[i]<-estimate(d_o,n_o)$Original, silent = TRUE)
+
+if(DB[1]!=0){
+  IN=DB[1]
+  OUT=DB[2]
+  
+  theta1=NULL
+  theta2=matrix(ncol = OUT, nrow=IN)
+  for(i in 1:OUT){
+    N<-length(d1)
+    Ib<-sample(N,N,replace=TRUE)  ## sampling with replacement
+    Db<-d1[Ib] 
+    try(theta1[i]<-estimate(Db)$Original, silent = TRUE)
+    
+    for(c in 1:IN){
+      Ic<-sample(N,N,replace=TRUE)  ## sampling with replacement
+      Dc<-Db[Ic] 
+      try( theta2[c,i]<-estimate(Dc)$Original, silent = TRUE)
       
-      for(c in 1:IN){
-        Ic<-sample(N,N,replace=TRUE)  ## sampling with replacement
-        d_i<-d_o[Ic] 
-        n_i<-n_o[Ic] 
-        try( theta2[c,i]<-estimate(d_i,n_i)$Original, silent = TRUE)
-        
-      }
     }
-    Boot1<- mean(theta1, na.rm = TRUE)
-    Boot2<- mean(theta2, na.rm = TRUE)
-    BC<- 2*Estimate_Standard$Original -Boot1
-    DBC<- (3*Estimate_Standard$Original-3*Boot1+Boot2)
-    
-    Estimate_DoubleBootstrap<-list(Original = Estimate_Standard$Original, Bootstrap=BC, Double_Bootstrap=DBC, oValues=theta1, iValues=theta2)
-    
   }
+  Boot1<- mean(theta1, na.rm = TRUE)
+  Boot2<- mean(theta2, na.rm = TRUE)
+  BC<- 2*Estimate_Standard$Original -Boot1
+  DBC<- (3*Estimate_Standard$Original-3*Boot1+Boot2)
   
+  Estimate_DoubleBootstrap<-list(Original = Estimate_Standard$Original, Bootstrap=BC, Double_Bootstrap=DBC, oValues=theta1, iValues=theta2)
+  
+}
   
   if(JC==TRUE){
-    N=length(d)
+    N=length(d1)
     Test=NULL
     for(v in 1:N){
-      d2<-d[-v]
-      n2<-n[-v]
-      try(Test[v]<-estimate(d2,n2)$Original)
+      d2<-d1[-v]
+      
+      try(Test[v]<-estimate(d2)$Original)
       
     }
     
     Estimate_Jackknife<-list(Original = Estimate_Standard$Original, Jackknife=(N*Estimate_Standard$Original-(N-1)*mean(Test)))
+    
     
   } 
   

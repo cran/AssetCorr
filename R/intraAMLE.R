@@ -21,7 +21,7 @@ function(d,n,B=0,DB=c(0,0),JC=FALSE,Adjust=0,CI_1,CI_2, CI_Boot, type="bca", plo
     if(missing(CI_1)){Est<-list(Original =p_d1/(1+p_d1))}else{ 
       CI_1=1-(1-CI_1)/2
      
-      Est<-list(Original =p_d1/(1+p_d1), CI_1=c(p_d1/(1+p_d1)-qnorm(CI_1)*(sqrt(2/length(X)*((p_d1)/(1+p_d1)^2))),p_d1/(1+p_d1)+qnorm(CI_1)*(sqrt(2/length(X)*((p_d1)/(1+p_d1)^2))))
+      Est<-list(Original =p_d1/(1+p_d1), CI_1=c(p_d1/(1+p_d1)-qnorm(CI_1)*(sqrt(2/length(X))*((p_d1)/(1+p_d1)^2)),p_d1/(1+p_d1)+qnorm(CI_1)*(sqrt(2/length(X))*((p_d1)/(1+p_d1)^2)))
       )
       
     }
@@ -163,16 +163,16 @@ function(d,n,B=0,DB=c(0,0),JC=FALSE,Adjust=0,CI_1,CI_2, CI_Boot, type="bca", plo
     }
   }
   if(JC==TRUE){
-    estimate5=function(X){
-      p_d1=var(qnorm(X))
-      Res2=p_d1/(1+p_d1)
+    N=length(d1)
+    Test=NULL
+    for(v in 1:N){
+      d2<-d1[-v]
+      
+      try(Test[v]<-estimate3(d2)$Original)
       
     }
-    Estimate_Standard<- estimate5(d1)
-    N<-length(n)
-    Jackknife<- mean(jackknife(d1,estimate5)$jack.values, na.rm=TRUE)
-    Estimate_Jackknife<-list(Original = Estimate_Standard, Jackknife=(N*Estimate_Standard-(N-1)*Jackknife))
     
+    Estimate_Jackknife<-list(Original = Estimate_Standard$Original, Jackknife=(N*Estimate_Standard$Original-(N-1)*mean(Test)))
     
   } 
   

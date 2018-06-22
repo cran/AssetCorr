@@ -26,7 +26,7 @@ interCMM <-
       Term2<- exp(-((0.5*s^2-rho*s*t+0.5*t^2)/(1-rho^2)))
       ABL1<- Term1*Term2
       
-      Term3_N<-s*t+ rho*(1-s^2-t^2) + s+t*rho^2 -rho^3 
+      Term3_N<-s*t+ rho*(1-s^2-t^2) + s*t*rho^2 -rho^3 
       Term3_D<- 2*pi*(1-rho^2)^(5/2)
       ABL2<- (Term3_N/Term3_D)*Term2
       
@@ -45,7 +45,7 @@ interCMM <-
       
       if(CI==0){Res2=Res
       Est<-list(Original =Res2)
-      }else{Est<-list(Original =Res, CI=c(Res-(qt(1-(1-CI)/2,T-1)/abs(ABL1))/sqrt(T)*sqrt(var2+2*(AB)),Res+(qt(1-(1-CI)/2,T-1)/abs(ABL1))/sqrt(T)*sqrt(var2+2*(AB))))
+      }else{Est<-list(Original =Res, CI=c(Res-(qt(1-(1-CI)/2,T-1)*abs(ABL1))/sqrt(T)*sqrt(var2+2*(AB)),Res+(qt(1-(1-CI)/2,T-1)*abs(ABL1))/sqrt(T)*sqrt(var2+2*(AB))))
       }
       
   
@@ -127,7 +127,7 @@ interCMM <-
         Term2<- exp(-((0.5*s^2-rho*s*t+0.5*t^2)/(1-rho^2)))
         ABL1<- Term1*Term2
         
-        Term3_N<-s*t+ rho*(1-s^2-t^2) + s+t*rho^2 -rho^3 
+        Term3_N<-s*t+ rho*(1-s^2-t^2) + s*t*rho^2 -rho^3 
         Term3_D<- 2*pi*(1-rho^2)^(5/2)
         ABL2<- (Term3_N/Term3_D)*Term2
         
@@ -175,7 +175,7 @@ interCMM <-
           Term2<- exp(-((0.5*s^2-rho*s*t+0.5*t^2)/(1-rho^2)))
           ABL1<- Term1*Term2
           
-          Term3_N<-s*t+ rho*(1-s^2-t^2) + s+t*rho^2 -rho^3 
+          Term3_N<-s*t+ rho*(1-s^2-t^2) + s*t*rho^2 -rho^3 
           Term3_D<- 2*pi*(1-rho^2)^(5/2)
           ABL2<- (Term3_N/Term3_D)*Term2
           
@@ -239,69 +239,17 @@ interCMM <-
     }
     if(JC==TRUE){
       N<-length(def1)
-      convert=function(d){
-        G=length(d)
-        y1=list()
-        for (y in 1:G){
-          
-          y1[[y]]=as.matrix((c(d[y])))
-        }
-        return(y1)
-      }
-      d1<-convert(def1)
-      d2<-convert(def2)
-      DEF_JC<-cbind(d1,d2)
-      
-      estimate5=function(X,CI){  
-        def1=NULL
-        N=length(X)/2
-        for(t in 1:N){
-          
-          def1[t]<-X[[t]]
-          
-        }
-        N1=2*N
-        def2=NULL
-        for(p in N:N1){
-          
-          def2[p]<-X[[p]]
-          
-        }
-        def2<-def2[-(1:(N))]
-        
-        pd_mean1=mean(def1)
-        pd_mean2=mean(def2)
-        s=qnorm(pd_mean1)
-        t=qnorm(pd_mean2)
-        Term1<- 1/(2*pi*sqrt(1-rho^2))
-        Term2<- exp(-((0.5*s^2-rho*s*t+0.5*t^2)/(1-rho^2)))
-        ABL1<- Term1*Term2
-        
-        Term3_N<-s*t+ rho*(1-s^2-t^2) + s+t*rho^2 -rho^3 
-        Term3_D<- 2*pi*(1-rho^2)^(5/2)
-        ABL2<- (Term3_N/Term3_D)*Term2
-        
-        TS=def1*def2
-        T<-length(def1)
-        if(l>0){
-          tryCatch(AC<-(acf(TS, plot = FALSE, type = "covariance")$acf)[(1:l),1,1], error = function(e) 0)
-          Sum=NULL
-          for (z in 1:l){
-            
-            Sum[z]<-(1-z/T)*AC[l]
-          }
-          AB=sum(Sum)} else{AB=0}
-        var2=var(TS)
-        
-        Res<- rho +(ABL2/(T*ABL1^3))*(var2/2 + AB)
     
-        return(Res)}
       
+      Test=NULL
+      for(v in 1:N){
+        d1<-def1[-v]
+        d2<-def2[-v]
+        try(Test[v]<-estimate(d1,d2,CI)$Original)
+        
+      }
       
-   
-      N<-length(def1)
-      Jackknife<- mean(jackknife(DEF_JC,estimate5)$jack.values, na.rm=TRUE)
-      Estimate_Jackknife<-list(Original = Estimate_Standard$Original, Jackknife=(N*Estimate_Standard$Original-(N-1)*Jackknife))
+      Estimate_Jackknife<-list(Original = Estimate_Standard$Original, Jackknife=(N*Estimate_Standard$Original-(N-1)*mean(Test)))
       
       
     }

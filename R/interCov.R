@@ -186,58 +186,16 @@ function(d1,n1,d2,n2,rho1,rho2,B=0,DB=c(0,0), JC=FALSE, CI_Boot, type="bca", plo
   
   if(JC==TRUE){
     N<-length(n1)
-    convert=function(d){
-      G=length(d)
-      y1=list()
-      for (y in 1:G){
-        
-        y1[[y]]=as.matrix((c(d[y])))
-      }
-      return(y1)
+   
+    Test=NULL
+    for(v in 1:N){
+      d1<-def1[-v]
+      d2<-def2[-v]
+      try(Test[v]<-estimate(d1,d2)$Original)
+      
     }
-    d1<-convert(def1)
-    d2<-convert(def2)
-    DEF_JC<-cbind(d1,d2)
     
-    estimate2=function(X){  
-      def1=NULL
-      N=length(X)/2
-      for(t in 1:N){
-        
-        def1[t]<-X[[t]]
-        
-      }
-      N1=2*N
-      def2=NULL
-      for(p in N:N1){
-        
-        def2[p]<-X[[p]]
-        
-      }
-      def2<-def2[-(1:(N))]
-      cov_est<-cov(def1,def2)
-      
-      probOneDefault1<- mean(def1)
-      probOneDefault2<- mean(def2)
-      
-      Inter_Est=function(R2){ 
-        corr=matrix(c(1,R2,R2,1),2)
-        
-        integrand=function(u){
-          pnorm((qnorm(probOneDefault2)-R2*sqrt(rho1* rho2)*u)/sqrt(1-R2^2*rho1* rho2))*dnorm(u)
-        }
-        E_D=integrate(integrand,-Inf,qnorm( probOneDefault1))$value 
-        
-        
-        
-        return(abs(E_D-probOneDefault1*probOneDefault2-cov_est))
-      }
-      InterCor <-optimise(Inter_Est, interval = c(-1, 1), maximum = FALSE)$minimum
-      return(InterCor)}
-  
-    N<-length(n1)
-    Jackknife<- mean(jackknife(DEF_JC,estimate2)$jack.values, na.rm=TRUE)
-    Estimate_Jackknife<-list(Original = Estimate_Standard$Original, Jackknife=(N*Estimate_Standard$Original-(N-1)*Jackknife))
+    Estimate_Jackknife<-list(Original = Estimate_Standard$Original, Jackknife=(N*Estimate_Standard$Original-(N-1)*mean(Test)))
     
   }
   

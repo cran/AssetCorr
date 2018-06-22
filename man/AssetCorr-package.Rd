@@ -28,7 +28,7 @@ Maintainer: Maximilian Nagl <maximilian.nagl@ur.de>
 
 \references{
 
-De Servigny, A. and O. Renault: Default correlation: empirical evidence. Working Paper, Standard and Poor's: 90-94, 2003. Available at: \url{https://www.researchgate.net/profile/Olivier_Renault2/publication/228679968_Default_correlation_Empirical_evidence/links/00b4951aa5379eff1d000000.pdf}. Accessed: 01.05.2018
+De Servigny, A. and O. Renault: Default correlation: empirical evidence. Working Paper, Standard and Poor's: 90-94, 2003. Available at: \url{http://www.greta.it/credit/credit2003/Speaker/DeServigny_Renault.pdf}. Accessed: 01.06.2018
 
 Duellmann, K. and M. Gehde-Trapp: Systematic risk in recovery rates: an empirical analysis of US corporate credit exposures. Bundesbank Series 2, Discussion Paper (2): 2004. Available at SSRN: \url{https://papers.ssrn.com/sol3/papers.cfm?abstract_id=2793954}. Accessed: 01.05.2018
 

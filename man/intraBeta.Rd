@@ -1,15 +1,16 @@
-\name{intraAMM}
-\alias{intraAMM}
+\name{intraBeta}
+\alias{intraBeta}
 
-\title{ Asymptotic Method of Moments Estimator
+\title{ Parametric Approach of \insertCite{botha2010implied;textual}{AssetCorr}- Beta Distribution
 
 }
 \description{
-The intra asset correlation will be estimated by fitting the first two moments of the default rate time series to the theoretical moments of the default rate and backing out the remaining correlation parameter numerically. Additionally, bootstrap and jackknife corrections are implemented.
+The intra asset correlation will be estimated by fitting a beta distribution onto the default rate time series, then calculating the Value-at-Risk (VaR) of this beta distribution and fit it to the theoretical VaR of the Vasicek distribution. The correlation parameter will be backed out numerically. Additionally, bootstrap and jackknife corrections are implemented.
 
 }
 \usage{
-intraAMM(d, n, B = 0, DB=c(0,0), JC = FALSE,CI_Boot, type="bca", plot=FALSE)
+intraBeta(d, n, Quantile=0.999,B = 0, DB=c(0,0), JC = FALSE,
+CI_Boot, type="bca", plot=FALSE)
 }
 
 \arguments{
@@ -17,6 +18,9 @@ intraAMM(d, n, B = 0, DB=c(0,0), JC = FALSE,CI_Boot, type="bca", plot=FALSE)
 
 }
   \item{n}{a vector, containing the number of obligors at the beginning of the period over time.
+
+}
+\item{Quantile}{a number, indicating the desired confidence level of the Value-at-Risk.
 
 }
   \item{B}{an integer, indicating how many bootstrap repetitions should be used for the single bootstrap corrected estimate.
@@ -35,7 +39,14 @@ intraAMM(d, n, B = 0, DB=c(0,0), JC = FALSE,CI_Boot, type="bca", plot=FALSE)
 } 
 }
 \details{
-As stated by \insertCite{vasicek1991;textual}{AssetCorr} and \insertCite{vasicek2002;textual}{AssetCorr}, the asset variables follow a bivariate normal distribution. Since this distribution can be parametrized by the first two moments, namely the expected value and the variance, the remaining correlation parameter can be backed out numerically. The expected value will be approximated by the mean of the default rate and the variance is defined as the sample variance of the default rate. For theoretical background, see \insertCite{gordy2000comparative;textual}{AssetCorr}. If \code{DB} is specified, the single bootstrap corrected estimate will be calculated by using the bootstrap values of the outer loop (\code{oValues}).
+As stated by \insertCite{botha2010implied;textual}{AssetCorr} one can estimate the intra correlation by matching VaR of a parametrized beta distribution onto the VaR of the Vasicek distribution. To do so, the shape parameters (alpha and beta) of the beta distribution are estimated according to \insertCite{botha2010implied;textual}{AssetCorr}. Afterwards, the VaR_Beta at the confidence level of \code{Quantile} will be estimated. In a third step, this VaR_Beta is matched with the theoretical VaR of the Vasicek distribution, given by \insertCite{vasicek1991;textual}{AssetCorr}:
+
+\deqn{VaR_Vasicek= Phi((Phi^-1(PD)+sqrt(rho)*Phi^-1(Quantile))/sqrt(1-rho))}
+
+Since \code{Quantile} and the corresponding VaR_Beta is known, the intra correlation parameter can be backed out numerically.
+This estimator is sensitive to the chosen \code{Quantile}. \insertCite{botha2010implied;textual}{AssetCorr} suggested to use \code{Quantile=0.999}, but for validation purposes one may choose different values of \code{Quantile} to infer information about the robustness of the correlation estimate.
+
+If \code{DB} is specified, the single bootstrap corrected estimate will be calculated by using the bootstrap values of the outer loop (\code{oValues}).
 
 }
 \value{
@@ -55,7 +66,7 @@ The returned value is a list, containing the following components (depending on 
 
 }
 \references{
-
+\insertRef{botha2010implied}{AssetCorr} 
 
 \insertRef{chang2015double}{AssetCorr}
 
@@ -65,37 +76,36 @@ The returned value is a list, containing the following components (depending on 
 
 \insertRef{vasicek1991}{AssetCorr}
 
-\insertRef{vasicek2002}{AssetCorr}
+
 
 
 }
 \seealso{
-\code{\link{intraFMM}}, \code{\link{intraJDP1}}, \code{\link{intraJDP2}},
-\code{\link{intraCMM}}, \code{\link{intraMLE}}, \code{\link{intraAMLE}},
-\code{\link{intraMode}},\code{\link{intraBeta}}
-
+\code{\link{intraFMM}}, \code{\link{intraJDP1}}, \code{\link{intraJDP2}}
+\code{\link{intraCMM}}, \code{\link{intraMLE}}, \code{\link{intraAMLE}}
+\code{\link{intraMode}}
 }
 \examples{
 set.seed(111)
 d=defaultTimeseries(1000,0.3,20,0.01)
 n=rep(1000,20)
 
-IntraCorr=intraAMM(d,n)
+IntraCorr=intraBeta(d,n)
 
 #Jackknife correction
-IntraCorr=intraAMM(d,n, JC=TRUE)
+IntraCorr=intraBeta(d,n, JC=TRUE)
 
 \donttest{
 #Bootstrap correction with confidence intervals
-IntraCorr=intraAMM(d,n, B=1000, CI_Boot=0.95 )
+IntraCorr=intraBeta(d,n, B=1000, CI_Boot=0.95 )
 
 #Bootstrap correction with confidence intervals and plot
-IntraCorr=intraAMM(d,n, B=1000, CI_Boot=0.95, plot=TRUE )
+IntraCorr=intraBeta(d,n, B=1000, CI_Boot=0.95, plot=TRUE )
 
 #Double Bootstrap correction with 10 repetitions in the inner loop and 50 in the outer loop
-IntraCorr=intraAMM(D1,N1, DB=c(10,50))
+IntraCorr=intraBeta(D1,N1, DB=c(10,50))
 }
 
 }
-\keyword{ AMM}
-\keyword{ AMM}
+\keyword{ Beta}
+\keyword{ Beta}

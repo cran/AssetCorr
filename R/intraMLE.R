@@ -129,6 +129,7 @@ intraMLE <-
       BCA=function(data,n, indices){
         
         d <- data[indices,]
+        n<-n[indices]
         tryCatch(estimate(d,n,CI)$Original,error=function(e)NA)
         
         
@@ -225,87 +226,18 @@ intraMLE <-
     }
     
     if(JC==TRUE){
-      Estimate_Jackknife=list()
-      convert=function(d,n){
-        G=length(d)
-        y1=list()
-        for (y in 1:G){
-          
-          y1[[y]]=as.matrix(t(c(d[y],n[y])))
-        }
-        return(y1)
+      N=length(d)
+      Test=NULL
+      for(v in 1:N){
+        d2<-d[-v]
+        n2<-n[-v]
+        try(Test[v]<-estimate(d2,n2,CI)$Original)
+        
       }
-      d1<-convert(d,n)
-      estimate2=function(X,Confint){ 
-        if(missing(Confint)){Confint=0.5} 
-        d=NULL
-        n=NULL
-        for(i in 1:length(X)){
-          d[i]=X[[i]][,1]
-          n[i]=X[[i]][,2]
-        }
-        nll=function(rho){
-          Res2=list()
-          integral=NULL
-          simpson <- function(fun, a, b, n=700) {
-            # numerical integral using Simpson's rule
-            # assume a < b and n is an even positive integer
-            h <- (b-a)/n
-            x <- seq(a, b, by=h)
-            if (n == 2) {
-              s <- fun(x[1]) + 4*fun(x[2]) +fun(x[3])
-            } else {
-              s <- fun(x[1]) + fun(x[n+1]) + 2*sum(fun(x[seq(2,n,by=2)])) + 4 *sum(fun(x[seq(3,n-1, by=2)]))
-            }
-            s <- s*h/3
-            return(s)
-          }
-          trapezoid <- function(fun, a, b, n=100) {
-            # numerical integral of fun from a to b
-            # using the trapezoid rule with n subdivisions
-            # assume a < b and n is a positive integer
-            h <- (b-a)/n
-            x <- seq(a, b, by=h)
-            y <- fun(x)
-            s <- h * (y[1]/2 + sum(y[2:n]) + y[n+1]/2)
-            return(s)
-          }
-          ll=0
-          d1=d/n
-          PD1=mean(d1)
-          for(i in 1:length(d)){
-            d1i=d[i]
-            n1i=n[i]
-            
-            integrand=function(x){
-              
-              condPD <- pnorm((qnorm(PD1) - sqrt(rho) * x) / sqrt(1 - rho));
-              return (choose(n1i, d1i) * (condPD^d1i) * ((1 - condPD)^(n1i - d1i)) * dnorm(x));
-            }
-            #integral[i]=trapezoid(integrand,-10,10,n=100)
-            integral[i]=simpson(integrand,-10,10,n=1000)
-            if(is.na(integral[i])){integral[i]=1}
-            #rules<- ghermite.h.quadrature.rules(15, 0, normalized=FALSE)
-            #order.np1.rule <- rules[[15]]
-            #integral[i]=ghermite.h.quadrature(integrand, rule = order.np1.rule )
-            ll=ll+log(integral[i])
-          }
-          # print(-ll)
-          return(-ll)
-        }
-        #Res2<-mle(minuslogl = nll, start =list(rho=0.0001),method = "Brent",lower=0.001,upper=0.999)@coef
-        
-        
-        Res2[[1]]<- optimise(nll, interval = c(0, 1), maximum = FALSE)
-        if(is.na(Res2[[1]]$objective)){Res2[[1]]=NA}else{Res2=Res2[[1]]$minimum}
-        #Res<-optim(rho=0.0001,nll, method = "BFGS",hessian=T)
-        return(Res2)}
+      
+      Estimate_Jackknife<-list(Original = Estimate_Standard$Original, Jackknife=(N*Estimate_Standard$Original-(N-1)*mean(Test)))
       
       
-      N<-length(n)
-      Jackknife<- mean(jackknife(d1,estimate2)$jack.values, na.rm=TRUE)
-      Estimate_Jackknife<-list(Original = Estimate_Standard$Original, Jackknife=(N*Estimate_Standard$Original-(N-1)*Jackknife))
-  
       
       
     } 

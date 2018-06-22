@@ -207,75 +207,17 @@ function(d1,n1,d2,n2,rho1,rho2,B=0, DB=c(0,0),JC=FALSE,CI_Boot,type="bca", plot=
   
   
   if(JC==TRUE){
-    N<-length(def1)
-    convert=function(d){
-      G=length(d)
-      y1=list()
-      for (y in 1:G){
-        
-        y1[[y]]=as.matrix((c(d[y])))
-      }
-      return(y1)
-    }
-    d1<-convert(def1)
-    d2<-convert(def2)
-    DEF_JC<-cbind(d1,d2)
-    
-    
-    estimate2=function(X){
-      def1=NULL
-      N=length(X)/2
-      for(t in 1:N){
-        
-        def1[t]<-X[[t]]
-        
-      }
-      N1=2*N
-      def2=NULL
-      for(p in N:N1){
-        
-        def2[p]<-X[[p]]
-        
-      }
-      def2<-def2[-(1:(N))]
-      
-      numPeriods <- length(def1)
-      probOneDefault1<- mean(def1)
-      probOneDefault2<- mean(def2)
-      JDP_matching= function(rho){
-        Prod_ODF=0
-        temp=NULL
-        Emp_JDP=NULL
-        for (y in 1:numPeriods){
-          
-          temp[y]<- ((def1[y]* def2[y]))
-          
-          
-        }
-        Prod_ODF=sum(temp)
-        Emp_JDP<- Prod_ODF/numPeriods
-        
-        integrand=function(u){
-          pnorm((qnorm(probOneDefault2)-rho*sqrt(rho1*rho2)*u)/sqrt(1-rho^2*rho1*rho2))*dnorm(u)
-        }
-        prob2=integrate(integrand,-Inf,qnorm(probOneDefault1))$value 
-        
-        
-        return(abs(prob2-Emp_JDP)) 
-        
-        
-        
-      } 
-      
-      InterCor<-  optimise(JDP_matching, interval = c(-1, 1), maximum = FALSE)$minimum  
-      return(InterCor)
-    }
-    
-
     N<-length(n1)
-    Jackknife<- mean(jackknife(DEF_JC,estimate2)$jack.values, na.rm=TRUE)
-   
-    Estimate_Jackknife<-list(Original = Estimate_Standard$Original, Jackknife=(N*Estimate_Standard$Original-(N-1)*Jackknife))
+    
+    Test=NULL
+    for(v in 1:N){
+      d1<-def1[-v]
+      d2<-def2[-v]
+      try(Test[v]<-estimate(d1,d2)$Original)
+      
+    }
+    
+    Estimate_Jackknife<-list(Original = Estimate_Standard$Original, Jackknife=(N*Estimate_Standard$Original-(N-1)*mean(Test)))
     
   }
   

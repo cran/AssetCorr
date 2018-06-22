@@ -201,51 +201,17 @@ function(df1,df2,B=0, DB=c(0,0), JC=FALSE,CI,CI_Boot,type="bca", plot=FALSE){
   
   if(JC==TRUE){
     N<-length(df1)
-    convert=function(d){
-      G=length(d)
-      y1=list()
-      for (y in 1:G){
-        
-        y1[[y]]=as.matrix((c(d[y])))
-      }
-      return(y1)
-    }
-    df1<-convert(df1)
-    df2<-convert(df2)
-    DEF_JC<-cbind(df1,df2)
+
     
-    
-    estimate3=function(X){
-      
-      def1=NULL
-      N=length(X)/2
-      for(t in 1:N){
-        
-        def1[t]<-X[[t]]
-        
-      }
-      N1=2*N
-      def2=NULL
-      for(p in N:N1){
-        
-        def2[p]<-X[[p]]
-        
-      }
-      def2<-def2[-(1:(N))]
-      
-      u1=pobs(as.matrix(def1))
-      u2=pobs(as.matrix(def2))
-      
-      InterCor<-BiCopEst(u1,u2,family = 1)  
-      
-      Res2<-InterCor$par
-      return(Res2)
+    Test=NULL
+    for(v in 1:N){
+      d1<-df1[-v]
+      d2<-df2[-v]
+      try(Test[v]<-estimate(d1,d2,CI)$Original)
       
     }
     
-  
-    Jackknife<- mean(jackknife(DEF_JC,estimate3)$jack.values, na.rm=TRUE)
-    Estimate_Jackknife<-list(Original = Estimate_Standard$Original, Jackknife=(N*Estimate_Standard$Original-(N-1)*Jackknife))
+    Estimate_Jackknife<-list(Original = Estimate_Standard$Original, Jackknife=(N*Estimate_Standard$Original-(N-1)*mean(Test)))
     
     
     

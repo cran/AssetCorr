@@ -150,59 +150,17 @@ interMLE <-
       def1=rbind(d1,n1)
       def2=rbind(d2,n2)
       
-      DEF_JC<-rbind(def1,def2)
-      
-      estimate2=function(X){
-        d1<-X[1,]
-        n1<-X[2,]
-        d2<-X[3,]
-        n2<-X[4,]
-        integral=NULL
-        nll=function(rho){
-          ll=0
-          PD1=mean(d1/n1)
-          PD2=mean(d2/n2)
-          
-          for(i in 1:length(d1)){
-            d1i=d1[i]
-            n1i=n1[i]
-            d2i=d2[i]
-            n2i=n2[i]
-            integrand=function(x){
-              PDcond1=pnorm((qnorm(PD1)-sqrt(rho1)*x[,1])/sqrt(1-rho1))
-              PDcond2=pnorm((qnorm(PD2)-sqrt(rho2)*x[,2])/sqrt(1-rho2))
-              as.matrix(dbinom(d1i,n1i,PDcond1)*dbinom(d2i,n2i,PDcond2)*dmvnorm(x,sigma=matrix(c(1,rho,rho,1),2)))
-            }
-            myGrid <- createNIGrid(dim=2, type="GHe", level=45)
-            integral[i]=quadrature(integrand, myGrid)
-            if(is.na(integral[i])){integral[i]=1}
-            ll=ll+log(integral[i])
-            
-          }
-          
-          -ll
-        }
-        
-        
-        Res1<- optimise(nll, interval = c(-1, 1), maximum = FALSE)$minimum
-        
-        
-        
-        return(Res1)
-        
-        
-      }
-    
+      N<-length(n1)
       
       Test=NULL
       for(v in 1:N){
-        try(Test[v]<-unlist(estimate2(DEF_JC[,-v])))
+        d1<-def1[,-v]
+        d2<-def2[,-v]
+        try(Test[v]<-estimate(d1,d2,CI)$Original)
         
       }
-      Jackknife<- mean(Test, na.rm = TRUE)
       
-      Estimate_Jackknife<-list(Original = Estimate_Standard$Original, Jackknife=(N*Estimate_Standard$Original-(N-1)*Jackknife))
-      
+      Estimate_Jackknife<-list(Original = Estimate_Standard$Original, Jackknife=(N*Estimate_Standard$Original-(N-1)*mean(Test)))
       
     }
     

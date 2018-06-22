@@ -58,7 +58,7 @@ function(d, n, B=0,DB=c(0,0), JC=FALSE, CI_Boot,  type="bca", plot=FALSE){
     BCA=function(data,n, indices){
       
       d <- data[indices,]
-      
+      n<-n[indices]
       tryCatch(estimate(d,n)$Original,error=function(e)NA)
       
     }
@@ -140,70 +140,16 @@ function(d, n, B=0,DB=c(0,0), JC=FALSE, CI_Boot,  type="bca", plot=FALSE){
   }
   
   if(JC==TRUE){
-    
-    convert=function(d,n){
-      G=length(d)
-      y1=list()
-      for (y in 1:G){
-        
-        y1[[y]]=as.matrix(t(c(d[y],n[y])))
-      }
-      return(y1)
-    }
-    d1<-convert(d,n)
-    estimate2=function(X){ 
-      d=NULL
-      n=NULL
-      for(i in 1:length(X)){
-        d[i]=X[[i]][,1]
-        n[i]=X[[i]][,2]
-      }
-      estimateDefaultIntracorr <- function(pOneDefault, pTwoDefaults)# Equation 7 in Kalkbrenner
-      {
-        intracorr <- (pTwoDefaults - pOneDefault^2) / (pOneDefault - pOneDefault^2);
-        return (intracorr);
-      }
-      estimateAssetCorr <- function(pBothDefaults, PD_1, PD_2)
-      {
-        #   if (PD_1 == 0)
-        #   {
-        #     PD_1 = 10^-9;
-        #   }
-        #   if (PD_2 == 0)
-        #   {
-        #     PD_1 = 10^-9;
-        #   }
-        #   if (is.nan(pBothDefaults))
-        #   {
-        #     pBothDefaults = 10^-9;
-        #   }
-        c1 <- qnorm(PD_1);
-        c2 <- qnorm(PD_2);
-        fEquation <- function(rho)
-        {
-          return (pmvnorm(lower = c(-Inf, -Inf), upper = c(c1, c2), sigma = matrix(c(1, rho, rho, 1), nrow = 2)) - pBothDefaults);
-        }
-        return (uniroot(fEquation,c(0,1))$root);
-      }
-      
-      numPeriods <- length(n)
-      probOneDefault<- mean(d/n)
-      tempVec <-0
-      for (t in 1:numPeriods)
-      {
-        tempVec<- (tempVec + (d[t]^2 - d[t]) / (n[t]^2 - n[t]));
-      }
-      probTwoDefaults <- tempVec / numPeriods
-      defaultCorr <- estimateDefaultIntracorr(probOneDefault, probTwoDefaults);
-      assetCorr<-estimateAssetCorr(probTwoDefaults, probOneDefault, probOneDefault)
-      return(assetCorr)
+    N=length(d)
+    Test=NULL
+    for(v in 1:N){
+      d2<-d[-v]
+      n2<-n[-v]
+      try(Test[v]<-estimate(d2,n2)$Original)
       
     }
     
-   
-    N<-length(n)
-    Jackknife<- mean(jackknife(d1,estimate2)$jack.values, na.rm=TRUE)
-    Estimate_Jackknife<-list(Original = Estimate_Standard$Original, Jackknife=(N*Estimate_Standard$Original-(N-1)*Jackknife))
+    Estimate_Jackknife<-list(Original = Estimate_Standard$Original, Jackknife=(N*Estimate_Standard$Original-(N-1)*mean(Test)))
     
     
   } 

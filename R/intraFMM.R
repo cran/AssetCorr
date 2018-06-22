@@ -122,24 +122,16 @@ function(d,n,B=0,DB=c(0,0), JC=FALSE,CI_Boot, type="bca", plot=FALSE){
   }
   
   if(JC==TRUE){
-    estimate_jack=function(X){
+    N=length(d1)
+    Test=NULL
+    for(v in 1:N){
+      d2<-d1[-v]
       
-      
-      pd_mean=mean(X)
-      var_dat=var(X)
-      foo=function(rho){
-        corr=matrix(c(1,rho,rho,1),2)
-        prob=pmvnorm(lower=c(-Inf,-Inf),upper=c(qnorm(pd_mean),qnorm(pd_mean)),mean=c(0,0),corr=corr)
-        return(prob-pd_mean^2-var_dat)
-      } 
-      
-      uniroot(foo,c(0,1))$root
+      try(Test[v]<-estimate(d2)$Original)
       
     }
-    N<-length(n)
-    Jackknife<- mean(jackknife(d1,estimate_jack)$jack.values, na.rm=TRUE)
-    Estimate_Jackknife<-list(Original = Estimate_Standard$Original, Jackknife=(N*Estimate_Standard$Original-(N-1)*Jackknife))
     
+    Estimate_Jackknife<-list(Original = Estimate_Standard$Original, Jackknife=(N*Estimate_Standard$Original-(N-1)*mean(Test)))
     
     
   }  

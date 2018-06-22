@@ -1,4 +1,4 @@
-## ----setup, include=FALSE,warning=TRUE-----------------------------------
+## ----setup, include=FALSE------------------------------------------------
 library(knitr)
 
 ## ------------------------------------------------------------------------
@@ -84,4 +84,40 @@ Output$Bootstrap
 Output$Double_Bootstrap
 
 #Furthermore, a Jackknife correction would be possible
+
+## ------------------------------------------------------------------------
+#A general overview
+
+Output<-interALL(D1,N1,D2,N2,rho1,rho2 ,B=100, plot=TRUE)
+Output
+
+
+
+## ------------------------------------------------------------------------
+#A general overview
+
+library(mvtnorm)
+set.seed(111)
+NoO=1000 #Number of obligors in each sector
+Years=20
+AC=0.3
+PD=0.01
+
+#Calculate the conditional PDs:
+Psi=rmvnorm(Years,sigma=matrix(c(1,0.5,0.5,0.5,1,0.5,0.5,0.5,1),3))
+PDcond1=pnorm((qnorm(PD)-sqrt(AC)*Psi[,1])/sqrt(1-AC))
+PDcond2=pnorm((qnorm(PD)-sqrt(AC/2)*Psi[,2])/sqrt(1-AC/2))
+PDcond3=pnorm((qnorm(PD)-sqrt(AC*2)*Psi[,3])/sqrt(1-AC*2))
+
+
+#Draw the default time series, depending on the conditional PDs
+DTS=cbind(rbinom(Years,NoO,PDcond1),rbinom(Years,NoO,PDcond2),rbinom(Years,NoO,PDcond3))
+N=matrix(NoO,nrow = Years,ncol = 3)
+
+Output<-analyze_AssetCorr(DTS,N, B=100, Intra = c("AMM","FMM","CMM","JDP1"), Inter=c("Copula","Cov","JDP"))
+
+#Furthermore, the analyze_AssetCorr function also proves single/double bootstrap 
+#and Jackknife corrections. Additionally, the confidence intervals
+#can be estimated and visualized.
+
 

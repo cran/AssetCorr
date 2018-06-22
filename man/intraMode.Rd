@@ -1,18 +1,18 @@
-\name{intraFMM}
-\alias{intraFMM}
+\name{intraMode}
+\alias{intraMode}
 
-\title{Finite Sample Method of Moments Estimator
+\title{ Parametric Approach of \insertCite{botha2010implied;textual}{AssetCorr}- Mode
 
 }
 \description{
-The intra asset correlation will be estimated by fitting the first two moments of the default rate time series to the theoretical moments of the default rate and backing out the remaining correlation parameter numerically. The sample variance will be adjusted for an insufficiently large portfolio size. Additionally, bootstrap and jackknife corrections are implemented.
+The intra asset correlation will be estimated by fitting the mode of the default rate time series to the theoretical mode of the default rates and backing out the remaining correlation parameter numerically. Additionally, bootstrap and jackknife corrections are implemented.
 
 }
 \usage{
-intraFMM(d, n, B = 0, DB=c(0,0), JC = FALSE,  CI_Boot, type="bca", plot=FALSE)
+intraMode(d, n, B = 0, DB=c(0,0), JC = FALSE,CI_Boot, type="bca", plot=FALSE)
 }
 
- \arguments{
+\arguments{
  \item{d}{a vector, containing the default time series of the sector.
 
 }
@@ -23,7 +23,6 @@ intraFMM(d, n, B = 0, DB=c(0,0), JC = FALSE,  CI_Boot, type="bca", plot=FALSE)
 } 
  \item{DB}{a combined vector, indicating how many bootstrap repetitions should be used for the inner (first entry) and outer loop (second entry) to correct the bias using the double bootstrap.
 } 
-
   \item{JC}{ a logical variable, indicating if the jackknife corrected estimate should be calculated.
 
 }
@@ -36,8 +35,16 @@ intraFMM(d, n, B = 0, DB=c(0,0), JC = FALSE,  CI_Boot, type="bca", plot=FALSE)
 } 
 }
 \details{
-As stated by \insertCite{vasicek1991;textual}{AssetCorr} and \insertCite{vasicek2002;textual}{AssetCorr}, the asset variables follow a bivariate normal distribution. Since this distribution can be parametrized by the first two moments, namely the expected value and the variance, the remaining correlation parameter can be backed out numerically. The expected value will be approximated by the mean of the default rate and the variance is defined as the (corrected) sample variance of the default rate. For theoretical background, see \insertCite{gordy2000comparative;textual}{AssetCorr}. If \code{DB} is specified, the single bootstrap corrected estimate will be calculated by using the bootstrap values of the outer loop (\code{oValues}).}
+As stated by \insertCite{botha2010implied;textual}{AssetCorr} one can estimate the intra correlation by matching the theoretical and empirical mode. According to \insertCite{vasicek1991;textual}{AssetCorr} the default rates are only unimodal if the intra correlation is smaller than 0.5. Therefore, this estimator cannot be used for higher intra correlations. The theoretical mode is given by \insertCite{vasicek1991;textual}{AssetCorr}:
+
+\deqn{Mode_Vasicek=Phi(sqrt(1-rho)/(1-2*rho)*Phi^-1(PD))}
+
+
+If \code{DB} is specified, the single bootstrap corrected estimate will be calculated by using the bootstrap values of the outer loop (\code{oValues}).
+
+}
 \value{
+
 The returned value is a list, containing the following components (depending on the selected arguments):
 
 \item{Original}{Estimate of the original method}
@@ -48,8 +55,12 @@ The returned value is a list, containing the following components (depending on 
 \item{bValues}{Estimates from the bootstrap resampling}
 \item{iValues}{Estimates from the double bootstrap resampling- inner loop}
 \item{oValues}{Estimates from the double bootstrap resampling- outer loop}
+
+
+
 }
 \references{
+\insertRef{botha2010implied}{AssetCorr} 
 
 \insertRef{chang2015double}{AssetCorr}
 
@@ -59,15 +70,14 @@ The returned value is a list, containing the following components (depending on 
 
 \insertRef{vasicek1991}{AssetCorr}
 
-\insertRef{vasicek2002}{AssetCorr}
+
 
 
 }
-
 \seealso{
-\code{\link{intraAMM}}, \code{\link{intraJDP1}}, \code{\link{intraJDP2}},
+\code{\link{intraFMM}}, \code{\link{intraJDP1}}, \code{\link{intraJDP2}}
 \code{\link{intraCMM}}, \code{\link{intraMLE}}, \code{\link{intraAMLE}},
-\code{\link{intraMode}},\code{\link{intraBeta}}
+\code{\link{intraBeta}}
 
 }
 \examples{
@@ -75,23 +85,22 @@ set.seed(111)
 d=defaultTimeseries(1000,0.3,20,0.01)
 n=rep(1000,20)
 
-IntraCorr=intraFMM(d,n)
+IntraCorr=intraMode(d,n)
 
 #Jackknife correction
-IntraCorr=intraFMM(d,n, JC=TRUE)
+IntraCorr=intraMode(d,n, JC=TRUE)
 
 \donttest{
 #Bootstrap correction with confidence intervals
-IntraCorr=intraFMM(d,n, B=1000, CI_Boot=0.95 )
+IntraCorr=intraMode(d,n, B=1000, CI_Boot=0.95 )
 
 #Bootstrap correction with confidence intervals and plot
-IntraCorr=intraFMM(d,n, B=1000, CI_Boot=0.95, plot=TRUE )
+IntraCorr=intraMode(d,n, B=1000, CI_Boot=0.95, plot=TRUE )
 
 #Double Bootstrap correction with 10 repetitions in the inner loop and 50 in the outer loop
-IntraCorr=intraFMM(D1,N1, DB=c(10,50))
-
+IntraCorr=intraMode(D1,N1, DB=c(10,50))
 }
 
 }
-\keyword{FMM}
-\keyword{FMM}
+\keyword{Mode}
+\keyword{Mode}

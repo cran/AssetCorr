@@ -71,8 +71,9 @@ The returned value is a list, containing the following components (depending on 
 }
 
 \seealso{
-\code{\link{intraAMM}}, \code{\link{intraFMM}}, \code{\link{intraJDP2}}
-\code{\link{intraMLE}}, \code{\link{intraJDP1}}, \code{\link{intraAMLE}}
+\code{\link{intraAMM}}, \code{\link{intraFMM}}, \code{\link{intraJDP2}},
+\code{\link{intraMLE}}, \code{\link{intraJDP1}}, \code{\link{intraAMLE}},
+\code{\link{intraMode}},\code{\link{intraBeta}}
 }
 \examples{
 set.seed(10)
