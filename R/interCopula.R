@@ -22,9 +22,17 @@ function(df1,df2,B=0, DB=c(0,0), JC=FALSE,CI,CI_Boot,type="bca", plot=FALSE){
       u1=pobs(as.matrix(df1))
       u2=pobs(as.matrix(df2))
       
-      InterCor<-BiCopEst(u1,u2,family = 1,se=TRUE) 
+      InterCor<-BiCopEst(u1,u2,family = 1,se=T) 
+
+        
+      a=sum(qnorm(u1)^2+qnorm(u2)^2)
+      b=sum(qnorm(u1)*qnorm(u2))
+      x=InterCor$par
+      Hessian=(a*(3*x^2+1)-2*b*x^3-6*b*x+length(u1)*x^4-length(u1))/(x^2-1)^3
+      SD=sqrt(1/(-Hessian))
+      
       CI=1-(1-CI)/2
-      Est<-list(Original =InterCor$par, CI=c(InterCor$par-qnorm(CI)*InterCor$se,InterCor$par+qnorm(CI)*InterCor$se))
+      Est<-list(Original =InterCor$par, CI=c(InterCor$par-qnorm(CI)*SD,InterCor$par+qnorm(CI)*SD))
       
     }
   

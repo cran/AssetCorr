@@ -1,5 +1,37 @@
 \name{NEWS}
 \title{News for Package \pkg{AssetCorr}}
+\section{Changes in version 1.0.2 (2018-07-08)}{
+\subsection{New Features}{
+  \itemize{
+    
+    \item New feature in  \code{<intraAMLE>} I:\cr
+  If confidence intervals based on Duellmann and Gehde-Trapp (2004) are selected, the confidence intervals are constructed  for the unconditional PD.
+  
+     \item New feature in  \code{<intraAMLE>} II:\cr
+In addition to PD and intra correlation, also the asymptotic Value-at-Risk and Expected Shortfall is now calculated. Additionally  confidence intervasl for both risk measures are constructed via delta method.
+  
+   \item New feature in  \code{<interCopula>}:\cr
+The asymptotic confidence intervals are now computed analytically instead of numerically via the \code{<VineCopula>} package.
+  
+
+}
+
+}
+\subsection{Bug Fixes}{
+
+\itemize{
+
+\item Minor bug fixes. \cr
+
+
+}
+
+}
+
+
+
+}
+
 
 \section{Changes in version 1.0.1 (2018-06-20)}{
 \subsection{New Features}{
