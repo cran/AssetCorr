@@ -19,6 +19,8 @@ AssetCorr is a package for the estimation of intra and inter asset correlations 
   + Joint Default Probability Matching 1 ("intraJDP1", Lucas (1995))
   + Joint Default Probability Matching 2 ("intraJDP2", De Servigny and Renault (2002))
   + Corrected Method of Moments ("intraCMM", Frei and Wunsch (2018))
+  + Parametric Apporach- Mode Matching ("intraMode", Botha and van Vuuren (2010))
+  + Parametric Apporach- Beta Distribution ("intraBeta", Botha and van Vuuren (2010))
   + Binomial Maximum Likelihood Estimator ("intraMLE", Gordy and Heitfield (2010))
   + Asymptotic Maximum Likelihood Estimator ("intraAMLE",  Duellmann and Gehde-Trapp (2004))
   
@@ -234,7 +236,7 @@ Lucas, D. J.: _Default correlation and credit analysis._ The Journal of Fixed In
 
 Meyer, C.: _Estimation of intra-sector asset correlations._ The Journal of Risk Model Validation 3(3): 47-79, 2009
 
-Pfeuffer M., M. Nagl , M. Fischer, and D. Roesch: _Parameter Estimation and Bias Correction in the Vasicek Credit Portfolio Model._  (In Preparation), 2018
+Pfeuffer M., M. Nagl , M. Fischer, and D. Roesch: _Parameter Estimation, Bias Correction and Uncertainty Quantification in the Vasicek Credit Portfolio Model._  (In Preparation), 2018
 
 Vasicek, O. A: _The distribution of loan portfolio value._ Risk 15(12): 160-162, 2002
 

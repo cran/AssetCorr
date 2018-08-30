@@ -1,5 +1,5 @@
 interCMM <-
-  function(d1,n1,d2,n2,rho,l=0, B=0, DB=c(0,0), JC=FALSE,CI=0,CI_Boot, type="bca", plot=FALSE){
+  function(d1,n1,d2,n2,rho,l=0, B=0, DB=c(0,0), JC=FALSE,CI_Boot, type="bca", plot=FALSE){
     if(is.numeric(d1)){d1=d1}else{stop("d1 is not numeric")}
     if(is.numeric(n1)){n1=n1}else{stop("n1 is not numeric")}
     if(is.numeric(d2)){d2=d2}else{stop("d2 is not numeric")}
@@ -16,7 +16,7 @@ interCMM <-
     def2=d2/n2
     pd_mean1=mean(def1)
     pd_mean2=mean(def2)
-    
+    CI=0
     estimate=function(def1,def2,CI){
       
       
@@ -37,7 +37,7 @@ interCMM <-
         Sum=NULL
         for (z in 1:l){
           
-          Sum[z]<-(1-z/T)*AC[l]
+          Sum[z]<-(1-z/T)*AC[z]
         }
         AB=sum(Sum)} else{AB=0}
       var2=var(TS)
@@ -138,7 +138,7 @@ interCMM <-
           Sum=NULL
           for (z in 1:l){
             
-            Sum[z]<-(1-z/T)*AC[l]
+            Sum[z]<-(1-z/T)*AC[z]
           }
           AB=sum(Sum)} else{AB=0}
         var2=var(TS)
@@ -186,7 +186,7 @@ interCMM <-
             Sum=NULL
             for (z in 1:l){
               
-              Sum[z]<-(1-z/T)*AC[l]
+              Sum[z]<-(1-z/T)*AC[z]
             }
             AB=sum(Sum)} else{AB=0}
           var2=var(TS)

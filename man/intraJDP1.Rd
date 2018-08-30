@@ -1,7 +1,7 @@
 \name{intraJDP1}
 \alias{intraJDP1}
 
-\title{Joint Default Probability Matching Estimator, Lucas(1995)
+\title{Joint Default Probability Matching Estimator, Lucas (1995)
 
 }
 \description{

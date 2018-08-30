@@ -1,5 +1,5 @@
 intraCMM <-
-  function(d,n,l=0, B=0, DB=c(0,0), JC=FALSE, CI=0,CI_Boot,type="bca", plot=FALSE){
+  function(d,n,l=0, B=0, DB=c(0,0), JC=FALSE,CI_Boot,type="bca", plot=FALSE){
     if(is.numeric(d)){d=d}else{stop("d is not numeric")}
     if(is.numeric(n)){n=n}else{stop("n is not numeric")}
     if(B==0&& plot==TRUE){stop("please select a number of bootstrap repititions for the plot")}
@@ -8,11 +8,11 @@ intraCMM <-
     if(length(d)==length(n)){}else{stop("Input vectors do not have the same length")}
     
     d1=d/n
-    
+    CI=0
     estimate=function(X,CI){
       if(CI==0){  
-        pd_mean=mean(X)
-        var_dat= 1/length(X)*sum((X^2-X/n[1]))
+        pd_mean=1/length(X)*sum(X)
+        var_dat= 1/length(X)*sum((X^2-X/n))
         foo=function(rho){
           corr=matrix(c(1,rho,rho,1),2)
           prob=pmvnorm(lower=c(-Inf,-Inf),upper=c(qnorm(pd_mean),qnorm(pd_mean)),mean=c(0,0),corr=corr)
@@ -31,14 +31,24 @@ intraCMM <-
           Sum=NULL
           for (z in 1:l){
             
-            Sum[z]<-(1-z/Time)*AC[l]
+            Sum[z]<-(1-z/Time)*AC[z]
           }
           AB=sum(Sum)} else{AB=0}
-        var2=var(X^2)
+        
+        
+        
+        nX=X^2
+        nM=1/length(X)*sum(nX)
+        var2=var(nX)
+        
+        
+        Res2=(Res +(ABL2/(Time*ABL1^3))*(var2/2 + AB))
+        
+        
         Est<-list(Original =(Res +(ABL2/(Time*ABL1^3))*(var2/2 + AB)))
       }else{
-        pd_mean=mean(X)
-        var_dat= 1/length(X)*sum((X^2-X/n[1]))
+        pd_mean=1/length(X)*sum(X)
+        var_dat= 1/length(X)*sum((X^2-X/n))
         foo=function(rho){
           corr=matrix(c(1,rho,rho,1),2)
           prob=pmvnorm(lower=c(-Inf,-Inf),upper=c(qnorm(pd_mean),qnorm(pd_mean)),mean=c(0,0),corr=corr)
@@ -57,12 +67,20 @@ intraCMM <-
           Sum=NULL
           for (z in 1:l){
             
-            Sum[z]<-(1-z/Time)*AC[l]
+            Sum[z]<-(1-z/Time)*AC[z]
           }
           AB=sum(Sum)} else{AB=0}
-        var2=var(X^2)
-        Res2=(Res +(ABL2/(Time*ABL1^3))*(var2/2 + AB))
-        Est<-list(Original =Res2, CI=c(Res2-(qt(1-(1-CI)/2,Time-1)/abs(ABL1))/sqrt(Time)*sqrt(var2+2*(AB)),Res2+(qt(1-(1-CI)/2,Time-1)/abs(ABL1))/sqrt(Time)*sqrt(var2+2*(AB))))
+        
+        
+        
+        nX=X^2
+        nM=1/length(X)*sum(nX)
+      var2=var(nX)
+
+      
+      Res2=(Res +(ABL2/(Time*ABL1^3))*(var2/2 + AB))
+        
+        Est<-list(Original =Res2, CI=c(Res2-(qt(1-(1-CI)/2,Time-1)*abs(1/ABL1))/sqrt(Time)*sqrt(var2+2*(AB)),Res2+(qt(1-(1-CI)/2,Time-1)*abs(1/ABL1))/sqrt(Time)*sqrt(var2+2*(AB))))
       }
       
     }
@@ -120,7 +138,7 @@ intraCMM <-
         CI=CI_Boot
         
         pd_mean=mean(d1)
-        var_dat= 1/length(d1)*sum((d1^2-d1/n[1]))
+        var_dat= 1/length(d1)*sum((d1^2-d1/n))
         foo=function(rho){
           corr=matrix(c(1,rho,rho,1),2)
           prob=pmvnorm(lower=c(-Inf,-Inf),upper=c(qnorm(pd_mean),qnorm(pd_mean)),mean=c(0,0),corr=corr)
@@ -131,13 +149,15 @@ intraCMM <-
         
         ABL1<- 1/(2*pi*sqrt(1-Res^2))*exp(-(s^2/(1+Res)))
         ABL2<- ((s^2+ Res*(1-2*s^2) + s^2*Res^2 -Res^3)/(2*pi*(1-Res^2)^(5/2)))*exp(-(s^2/(1+Res)))
-        var2=var(d1^2)
+        nX=d1^2
+        nM=1/length(d1^2)*sum(d1^2)
+        var2=1/length(d1)*sum(nX^2-nM^2)
         if(l>0){
           tryCatch(AC<-(acf(d1^2, plot = FALSE, type = "covariance")$acf)[(1:l),1,1], error = function(e) 0)
           Sum=NULL
           for (z in 1:l){
             
-            Sum[z]<-(1-z/N)*AC[l]
+            Sum[z]<-(1-z/N)*AC[z]
           }
           AB=sum(Sum)} else{AB=0}
         Res2=(Res +(ABL2/(N*ABL1^3))*(var2/2 + AB))

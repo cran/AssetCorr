@@ -8,7 +8,7 @@
 The estimator is based on \insertCite{frei2017moment;textual}{AssetCorr}, who introduced an analytic bias correction via Taylor series expansion. Additionally, the bias due to autocorrelated default time series can be corrected. Furthermore, additional bootstrap and jackknife bias corrections are implemented.
 }
 \usage{
-intraCMM(d,n,l=0, B=0, DB=c(0,0), JC=FALSE , CI=0,CI_Boot,type="bca", plot=FALSE)
+intraCMM(d,n,l=0, B=0, DB=c(0,0), JC=FALSE , CI_Boot,type="bca", plot=FALSE)
 }
 
 
@@ -31,9 +31,6 @@ intraCMM(d,n,l=0, B=0, DB=c(0,0), JC=FALSE , CI=0,CI_Boot,type="bca", plot=FALSE
 
 }
 
- \item{CI}{a number, indicating the desired analytical confidence interval of the estimate provided by \insertCite{frei2017moment;textual}{AssetCorr}. 
-
-}
 
 
   \item{CI_Boot}{a number, indicating the desired confidence level if the single bootstrap correction is specified. By default, the interval is calculated as the bootstrap corrected and accelerated confidence interval (Bca).Furthermore, the analytical confidence intervals are provided, using the same value as \code{CI_Boot}.
@@ -54,7 +51,6 @@ The returned value is a list, containing the following components (depending on 
 \item{Bootstrap}{Bootstrap corrected estimate}
 \item{Double_Bootstrap}{Double bootstrap corrected estimate}
 \item{Jackknife}{Jackknife corrected estimate}
-\item{CI}{Selected two-sided asymptotic confidence interval based on \insertCite{frei2017moment;textual}{AssetCorr}}
 \item{CI_Boot}{Selected two-sided bootstrap confidence interval}
 \item{bValues}{Estimates from the single bootstrap resampling}
 \item{iValues}{Estimates from the double bootstrap resampling- inner loop}
@@ -82,11 +78,9 @@ n=rep(1000,10)
 
 IntraCorr=intraCMM(d,n,l=0)
 
-#Estimation with confidence intervals
-IntraCorr=intraCMM(d,n, CI=0.95 )
 
-#Estimation with confidence intervals and correct two lags of autocorrelation
-IntraCorr=intraCMM(d,n, l=2 ,CI=0.95 )
+#Estimation with  two lags of autocorrelation
+IntraCorr=intraCMM(d,n, l=2 )
 
 #Jackknife correction
 IntraCorr=intraCMM(d,n, JC=TRUE)

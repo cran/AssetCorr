@@ -1,7 +1,7 @@
 \name{analyze_AssetCorr}
 \alias{analyze_AssetCorr}
 %- Also NEED an '\alias' for EACH other topic documented here.
-\title{Function several default time series simultaneously
+\title{Function to evaluate several default time series simultaneously
 
 }
 \description{

@@ -9,7 +9,7 @@ This method provides analytical bias correction via Taylor series expansion. Add
 }
 \usage{
 interCMM(d1,n1,d2,n2,rho,l=0, B=0,DB=c(0,0), JC=FALSE,
-CI=0,CI_Boot, type="bca", plot=FALSE)
+CI_Boot, type="bca", plot=FALSE)
 }
 
 
@@ -39,9 +39,7 @@ CI=0,CI_Boot, type="bca", plot=FALSE)
   \item{JC}{ a logical variable, indicating if the jackknife corrected estimate should be calculated.
 
 }
-  \item{CI}{a number, indicating the desired  asymptotic confidence bound of the estimate provided by \insertCite{frei2017moment;textual}{AssetCorr}. 
 
-}
   \item{CI_Boot}{a number, indicating the desired confidence level if the single bootstrap correction is specified. By default, the interval is calculated as the bootstrap corrected and accelerated confidence interval (Bca). Furthermore, the analytical confidence intervals are provided, using the same value as \code{CI_Boot}.
 } 
   \item{type}{a string, indicating the desired method to calculate the confidence intervals. For more details see \code{\link[boot]{boot.ci}}.
@@ -64,7 +62,6 @@ The returned value is a list, containing the following components (depending on 
 \item{Bootstrap}{Bootstrap corrected estimate}
 \item{Double_Bootstrap}{Double bootstrap corrected estimate}
 \item{Jackknife}{Jackknife corrected estimate}
-\item{CI}{Selected two-sided asymptotic bootstrap confidence interval}
 \item{CI_Boot}{Selected two-sided bootstrap confidence interval}
 \item{bValues}{Estimates from the bootstrap resampling}
 \item{iValues}{Estimates from the double bootstrap resampling- inner loop}
