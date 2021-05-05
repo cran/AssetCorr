@@ -28,7 +28,7 @@ Maintainer: Maximilian Nagl <maximilian.nagl@ur.de>
 
 \references{
 
-De Servigny, A. and O. Renault: Default correlation: empirical evidence. Working Paper, Standard and Poor's: 90-94, 2003. Available at: \url{http://www.greta.it/credit/credit2003/Speaker/DeServigny_Renault.pdf}. Accessed: 01.06.2018
+De Servigny, A. and O. Renault: Default correlation: empirical evidence. Working Paper, Standard and Poor's: 90-94, 2003. Available at: \url{https://www.semanticscholar.org/paper/Default-correlation\%3A-empirical-evidence-Servigny-Renault/aae251436d0e3b489951c0d38463d71106755675}. Accessed: 04.05.2020
 
 Duellmann, K. and M. Gehde-Trapp: Systematic risk in recovery rates: an empirical analysis of US corporate credit exposures. Bundesbank Series 2, Discussion Paper (2): 2004. Available at SSRN: \url{https://papers.ssrn.com/sol3/papers.cfm?abstract_id=2793954}. Accessed: 01.05.2018
 
@@ -36,7 +36,7 @@ Duellmann, K., J. Kuell and M. Kunisch: Estimating asset correlations from stock
 
 Efron, B. and R. J. Tibshirani: An introduction to the bootstrap. CRC press, 1994
 
-Pfeuffer, M.,  M. Nagl, M. Fischer  and D. Roesch: Parameter Estimation and Bias Correction in the Vasicek Credit Portfolio Model.  (In Preparation), 2018
+Pfeuffer, M.,  M. Nagl, M. Fischer  and D. Roesch: Parameter Estimation and Bias Correction in the Vasicek Credit Portfolio Model.  Journal of Risk 22(4), 2020
 
 Frei, C. and M. Wunsch: Moment Estimators for Autocorrelated Time Series and their Application to Default Correlations. Journal of Credit Risk 14: 1-29, 2018
 

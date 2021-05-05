@@ -95,7 +95,7 @@ IntraCorr=intraCMM(d,n, B=1000, CI_Boot=0.95 )
 IntraCorr=intraCMM(d,n, B=1000, CI_Boot=0.95, plot=TRUE )
 
 #Double Bootstrap correction with 10 repetitions in the inner loop and 50 in the outer loop
-IntraCorr=intraCMM(D1,N1, DB=c(10,50))
+IntraCorr=intraCMM(d,n, DB=c(10,50))
 
 }
 }

@@ -279,7 +279,7 @@ function(d,n,B=0,DB=c(0,0),JC=FALSE,Adjust=0,CI_1,CI_2, CI_Boot,VaR=0.99, VaR_CI
   if(B>0){return(Estimate_Bootstrap)}
   if(JC==TRUE){return(Estimate_Jackknife)}
   if(DB[1]!=0){return(Estimate_DoubleBootstrap)}
-  if(B==0 && JC==FALSE && DB==0){return(Estimate_Standard)}
+  if(B==0 && JC==FALSE && DB[1]==0){return(Estimate_Standard)}
   
   
 }

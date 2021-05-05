@@ -1,5 +1,24 @@
 \name{NEWS}
 \title{News for Package \pkg{AssetCorr}}
+
+
+\section{Changes in version 1.0.4 (2021-04-16)}{
+
+\subsection{Bug Fixes}{
+
+\itemize{
+
+\item Changed soft Dependencies  \cr
+
+
+}
+
+}
+
+
+
+}
+
 \section{Changes in version 1.0.3 (2018-08-29)}{
 
 \subsection{Bug Fixes}{

@@ -202,6 +202,6 @@ function(d1,n1,d2,n2,rho1,rho2,B=0,DB=c(0,0), JC=FALSE, CI_Boot, type="bca", plo
   if(B>0){return(Estimate_Bootstrap)}
   if(JC==TRUE){return(Estimate_Jackknife)}
   if(DB[1]!=0){return(Estimate_DoubleBootstrap)}
-  if(B==0 && JC==FALSE && DB==0){return(Estimate_Standard)}
+  if(B==0 && JC==FALSE && DB[1]==0){return(Estimate_Standard)}
   
 }

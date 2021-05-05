@@ -29,7 +29,7 @@ AssetCorr is a package for the estimation of intra and inter asset correlations 
   + Joint Default Probability Matching ("interJDP", De Servigny and Renault (2002))
   + Corrected Method of Moments ("interCMM", Frei and Wunsch (2018) )
   + Binomial Maximum Likelihood Estimator ("interMLE", Gordy and Heitfield (2010))
-  + Copula Based Maximum Likelihood Estimator (interCopula, Pfeuffer et al. (2018))
+  + Copula Based Maximum Likelihood Estimator (interCopula, Pfeuffer et al. (2020))
  
 ## Bias of the estimation methodologies 
   
@@ -49,7 +49,7 @@ The following plot displays on the x-axis the true assumed value of the intra as
 
 As we can see, the bias of method of moments methodologies can be tremendous, especially as the level of intra correlation increases. Furthermore, the MLE approach shows the best performance.
 
-Due to this large bias, Pfeuffer et al. (2018) suggested to use bootstrap and jackknife correction to reduce the bias. The following plot illustrates the combination of MLE and single bootstrap correction:
+Due to this large bias, Pfeuffer et al. (2020) suggested to use bootstrap and jackknife correction to reduce the bias. The following plot illustrates the combination of MLE and single bootstrap correction:
 
 ![Bias of the estimation methodologies](BCMarkdown.jpeg)
 
@@ -75,7 +75,7 @@ First, the point estimate for the intra correlation will be estimated:
 ```{r}
 intraAMM(D1,N1)
 ```
-As one can see, the Asymptotic Method of Moments underestimates the true value of 30% for the intra asset correlation. Hence Pfeuffer et al. (2018) suggested to use resampling methods to reduce this downward bias. Therefore, the single bootstrap correction will be illustrated in the following. This correction comes with the additional advantage that one can infer confidence intervals. Additionally, a plot of the bootstrap density can be generated:
+As one can see, the Asymptotic Method of Moments underestimates the true value of 30% for the intra asset correlation. Hence Pfeuffer et al. (2020) suggested to use resampling methods to reduce this downward bias. Therefore, the single bootstrap correction will be illustrated in the following. This correction comes with the additional advantage that one can infer confidence intervals. Additionally, a plot of the bootstrap density can be generated:
 ```{r}
 Output<-intraAMM(D1,N1, B=1000, CI_Boot = 0.95, plot=TRUE)
 
@@ -209,7 +209,7 @@ Output<-analyze_AssetCorr(DTS,N, B=100, Intra = c("AMM","FMM","CMM","JDP1"), Int
 ```
 
 ## References
-De Servigny, A. and O. Renault: _Default correlation: empirical evidence._ Working Paper, Standard and Poor's: 90-94, 2003. Available at: http://www.greta.it/credit/credit2003/Speaker/DeServigny_Renault.pdf. Accessed: 04.06.2018
+De Servigny, A. and O. Renault: _Default correlation: empirical evidence._ Working Paper, Standard and Poor's: 90-94, 2003. Available at: https://www.semanticscholar.org/paper/Default-correlation\%3A-empirical-evidence-Servigny-Renault/aae251436d0e3b489951c0d38463d71106755675. Accessed: 05.05.2020
 
 Duellmann, K. and M. Gehde-Trapp: _Systematic risk in recovery rates: an empirical analysis of US corporate credit exposures._ Bundesbank Series 2, Discussion Paper (2): 2004. Available at: http://hdl.handle.net/10419/19729. Accessed: 04.06.2018
 
@@ -236,7 +236,7 @@ Lucas, D. J.: _Default correlation and credit analysis._ The Journal of Fixed In
 
 Meyer, C.: _Estimation of intra-sector asset correlations._ The Journal of Risk Model Validation 3(3): 47-79, 2009
 
-Pfeuffer M., M. Nagl , M. Fischer, and D. Roesch: _Parameter Estimation, Bias Correction and Uncertainty Quantification in the Vasicek Credit Portfolio Model._  (In Preparation), 2018
+Pfeuffer M., M. Nagl , M. Fischer, and D. Roesch: _Parameter Estimation, Bias Correction and Uncertainty Quantification in the Vasicek Credit Portfolio Model._  Journal of Risk (22)1, 2020
 
 Vasicek, O. A: _The distribution of loan portfolio value._ Risk 15(12): 160-162, 2002
 
